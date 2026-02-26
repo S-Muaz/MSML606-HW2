@@ -60,59 +60,71 @@ class HomeWork2:
     # you can see the examples in p2_traversals.csv
 
     def prefixNotationPrint(self, head: TreeNode) -> list:
-        pass
+        if not head:
+            return []
+        return [head.val] + self.prefixNotationPrint(head.left) + self.prefixNotationPrint(head.right)
 
-    # Problem 2.2: Use in-order traversal (left, root, right) for infix notation with appropriate parentheses.
-    # return an array of elements of an infix expression
-    # expected output for the tree from problem 1 is [(,(,3,+,4,),*,2,)]
-    # you can see the examples in p2_traversals.csv
-
-    # don't forget to add parentheses to maintain correct sequence
-    # even the outermost expression should be wrapped
-    # treat parentheses as individual elements in the returned list (see output)
-
+    # Problem 2.2: In-order traversal (Infix) with parentheses 
     def infixNotationPrint(self, head: TreeNode) -> list:
-        pass
+        if not head:
+            return []
+        # If it's a leaf node (operand), just return its value 
+        if head.left is None and head.right is None:
+            return [head.val]
+        
+        # Wrapping the expression in parentheses as required 
+        return (['('] + self.infixNotationPrint(head.left) + 
+                [head.val] + 
+                self.infixNotationPrint(head.right) + [')'])
 
-
-    # Problem 2.3: Use post-order traversal (left, right, root) to generate postfix notation.
-    # return an array of elements of a postfix expression
-    # expected output for the tree from problem 1 is [3,4,+,2,*]
-    # you can see the examples in p2_traversals.csv
-
+    # Problem 2.3: Post-order traversal (Postfix)
     def postfixNotationPrint(self, head: TreeNode) -> list:
-        pass
-
+        if not head:
+            return []
+        return self.postfixNotationPrint(head.left) + self.postfixNotationPrint(head.right) + [head.val]
 
 class Stack:
-    # Implement your stack using either an array or a list
-    # (i.e., implement the functions based on the Stack ADT we covered in class)
-    # You may use Python's list structure as the underlying storage.
-    # While you can use .append() to add elements, please ensure the implementation strictly follows the logic we discussed in class
-    # (e.g., manually managing the "top" of the stack
-    
-    # Use your own stack implementation to solve problem 3
-
     def __init__(self):
-        # TODO: initialize the stack
-        pass
+        # Using a list as underlying storage but managing 'top' manually 
+        self.storage = []
+        self.top = -1 
 
-    # Problem 3: Write code to evaluate a postfix expression using stack and return the integer value
-    # Use stack which you implemented above for this problem
+    def push(self, val):
+        self.storage.append(val)
+        self.top += 1
 
-    # input -> a postfix expression string. E.g.: "5 1 2 + 4 * + 3 -"
-    # see the examples of test entries in p3_eval_postfix.csv
-    # output -> integer value after evaluating the string. Here: 14
+    def pop(self):
+        if self.top < 0:
+            raise IndexError("Pop from empty stack")
+        val = self.storage.pop()
+        self.top -= 1
+        return val
 
-    # integers are positive and negative
-    # support basic operators: +, -, *, /
-    # handle division by zero appropriately
-
-    # DO NOT USE EVAL function for evaluating the expression
-
-    def evaluatePostfix(exp: str) -> int:
-        # TODO: implement this using your Stack class
-        pass
+    # Problem 3: Evaluate postfix expression using the custom stack 
+    def evaluatePostfix(self, exp: str) -> int:
+        # Requirement: input is a space-separated string 
+        tokens = exp.split()
+        operators = {'+', '-', '*', '/'}
+        
+        for token in tokens:
+            if token not in operators:
+                # Convert string to integer for evaluation 
+                self.push(int(token))
+            else:
+                # Pop operands for the operation
+                b = self.pop()
+                a = self.pop()
+                
+                if token == '+': self.push(a + b)
+                elif token == '-': self.push(a - b)
+                elif token == '*': self.push(a * b)
+                elif token == '/':
+                    if b == 0:
+                        raise ZeroDivisionError("Division by zero") 
+                    # Use integer division or truncation as per standard postfix eval
+                    self.push(int(a / b))
+        
+        return self.pop()
 
 
 # Main Function. Do not edit the code below
