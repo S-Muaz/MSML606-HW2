@@ -23,8 +23,34 @@ class HomeWork2:
     #      / \
     #     3   4
 
-    def constructBinaryTree(self, input) -> TreeNode:
-        pass
+    def constructBinaryTree(self, input_list) -> TreeNode:
+        if not input_list:
+            return None
+        
+        stack = []
+        operators = {'+', '-', '*', '/'}
+        
+        for token in input_list:
+            # Strip whitespace to handle cases like ' 4' or ' +' 
+            clean_token = token.strip()
+            
+            if clean_token not in operators:
+                # Operand: Push a new leaf node onto the stack
+                stack.append(TreeNode(token))
+            else:
+                # Operator: Pop two nodes and make them children
+                # Error check: ensure there are enough operands 
+                if len(stack) < 2:
+                    continue 
+                
+                new_node = TreeNode(token)
+                new_node.right = stack.pop()  # First pop is the right child
+                new_node.left = stack.pop()   # Second pop is the left child
+                stack.append(new_node)
+        
+        # The last remaining node on the stack is the root 
+        return stack.pop() if stack else None
+
 
 
 
